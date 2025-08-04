@@ -3,7 +3,7 @@
 echo "Download ffmpeg..."
 mkdir -p ffmpeg
 
-curl_tar 'https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n7.1.tar.gz' ffmpeg 1
+curl_tar 'https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.xz' ffmpeg 1
 
 # Handbreak patches
 for patch in \
@@ -23,11 +23,11 @@ for patch in \
   'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A14-hevc_mp4toannexb.c-fix-qsv-decode-of-10bit-hdr.patch' \
   'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A15-Expose-the-unmodified-Dolby-Vision-RPU-T35-buffers.patch' \
   'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A16-avcodec-amfenc-Add-support-for-on-demand-key-frames.patch' \
-  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A17-avcodec-amfenc-properly-set-primaries-transfer-and-m.patch' \
-  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A18-Revert-avcodec-amfenc-GPU-driver-version-check.patch' \
-  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A19-lavc-pgssubdec-Add-graphic-plane-and-cropping.patch' \
-  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A28-enable-av1_mf-encoder.patch' \
-  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A29-Revert-lavc-Check-codec_whitelist-early-in-avcodec_o.patch'; do
+  'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A17-avcodec-amfenc-properly-set-primaries-transfer-and-m.patch'; do
+  # 'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A18-Revert-avcodec-amfenc-GPU-driver-version-check.patch' \
+  # 'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A19-lavc-pgssubdec-Add-graphic-plane-and-cropping.patch' \
+  # 'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A28-enable-av1_mf-encoder.patch' \
+  # 'https://github.com/HandBrake/HandBrake/raw/ed8cbd1/contrib/ffmpeg/A29-Revert-lavc-Check-codec_whitelist-early-in-avcodec_o.patch'; do
   curl "$patch" | patch -F5 -lp1 -d ffmpeg -t
 done
 
@@ -244,7 +244,6 @@ if ! ./configure \
   --disable-sdl2 \
   --disable-metal \
   --disable-opengl \
-  --disable-network \
   --disable-openssl \
   --disable-schannel \
   --disable-securetransport \
@@ -284,6 +283,9 @@ if ! ./configure \
   --enable-swscale \
   --enable-version3 \
   --enable-zlib \
+  --enable-videotoolbox \
+   --disable-static \
+   --enable-shared \
   $(
     # OpenCL is only available on iOS through a private framework
     if [ "$OS_IPHONE" -ge 1 ]; then
